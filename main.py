@@ -1,4 +1,6 @@
-from product import Product
+from product import NonStockedProduct, LimitedProduct
+from promotions import PercentDiscount, SecondHalfPrice, ThirdOneFree, TwentyPercentOff, ThirtyPercentOff
+
 from store import Store
 
 
@@ -24,8 +26,8 @@ def start(store):
         if option == '1':
             print("\n\n----------------------------------------------------------")
             products = store.get_all_products()
-            for product in products:
-                print(product.show())
+            for i, product in enumerate(products, start=1):
+                print(product.show(i))
             print("----------------------------------------------------------\n")
 
         # Printing the total quantity of all products in the store
@@ -40,8 +42,8 @@ def start(store):
             while True:
                 print("\n\n**********************************************************")
                 products = store.get_all_products()
-                for i, product in enumerate(products):
-                    print(f"{i + 1}. {product.show()}")
+                for i, product in enumerate(products, start=1):
+                    print(product.show(i))
                 print("**********************************************************\n")
                 product_number = input("Choose the product number. Press Enter when you are finished, "
                                        "or want to return back: ")
@@ -86,13 +88,18 @@ def start(store):
             print("\nInvalid option, please choose again.")
 
 
-if __name__ == "__main__":
-    # Creats the list of Product objects
-    product_list = [Product("MacBook Air M2", price=1450, quantity=100),
-                    Product("Bose QuietComfort Earbuds", price=250, quantity=500),
-                    Product("Google Pixel 7", price=500, quantity=250)
-                    ]
+def setup_store():
+    """Sets up the products and promotions for the store."""
+    product_list = [
+        LimitedProduct('MacBook Air M2', 1450, 100, 10, promotions=[TwentyPercentOff(), ThirtyPercentOff()]),
+        LimitedProduct("Bose QuietComfort Earbuds", 250, 500, 10, promotions=[ThirdOneFree()]),
+        LimitedProduct("Google Pixel 7", 500, 250, 5, promotions=[SecondHalfPrice()]),
+        NonStockedProduct("Windows License", 125, float('inf'), promotions=[PercentDiscount("30% off!", 30)]),
+        NonStockedProduct("Shipping", 10, 0)
+    ]
+    return Store(product_list)
 
-    # Create a store object wit the list of products and start the store interface
-    best_buy = Store(product_list)
-    start(best_buy)
+
+if __name__ == '__main__':
+    store = setup_store()
+    start(store)

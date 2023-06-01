@@ -1,3 +1,6 @@
+from product import LimitedProduct
+
+
 class Store:
     """Store class which represents a store with a list of products."""
 
@@ -15,7 +18,8 @@ class Store:
 
     def get_total_quantity(self):
         """Returns the total quantity of all products in the store."""
-        return sum(product.get_quantity() for product in self.product_list)
+        total_quantity = sum(product.quantity for product in self.product_list if product.quantity != float('inf'))
+        return total_quantity if total_quantity != float('inf') else "Unlimited"
 
     def get_all_products(self):
         """Returns all active products in the store."""
